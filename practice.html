@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WEb Page</title>
+        <style>
+            #headi{
+                
+                text-align: center;
+            }
+            #box1{
+                
+                
+                display: flex;
+                justify-content: center;
+            }
+            #inptbox{
+                text-align: center;
+                width:350px;
+                border: 1px solid black;
+                border-radius: 10px;
+                padding: 20px;
+            }
+            #addbtn{
+                padding: 7px;
+            }
+            #container{
+                display:flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap:40px;
+
+            }
+            .card{
+                border: 1px solid black;
+                border-radius: 10px;
+                width: 350px;
+                padding: 10px;
+                text-align: center;
+                
+            }
+        </style>
+
+
+    </head>
+    <body>
+        <h1 id="headi">STUDENT MANAGEMENT SYSTEM</h1>
+        <div id="box1">
+            <div id="inptbox">
+                <a>Name:       </a>
+            <input id="name" placeholder="ENTER NAME">
+            <br><br>
+            <a>BRANCH:     </a>
+            <input id="branch" placeholder="ENTER BRANCH">
+             <br><br>
+
+            <a>PERCENTAGE: </a>
+            <input id="prec" placeholder="ENTER PERCENTAGE">
+            <br>
+            <br>
+            <button id="addbtn">ADD STUDENT</button>
+            <br>
+            <br>
+            <input id="search" placeholder="Search By Student Name">
+
+
+            </div>
+            
+            
+
+            
+
+            
+
+        </div>
+        <br><br>
+        <br><br>
+        <br><br>
+        
+        <br>
+
+        <div id="container">
+
+
+            </div>
+            <br>
+           
+
+     <script>
+        let arr=JSON.parse(localStorage.getItem("records")) || [];
+        display();
+        let eindex=-1;
+        let btn1=document.querySelector("#addbtn");
+        document.querySelector("#search").addEventListener("input",
+        
+            function(){
+                let n=document.querySelector("#search").value;
+                let filte=arr.filter((x)=>x.name.includes(n));
+                display(filte);
+
+                
+            }
+        )
+        btn1.addEventListener("click",
+            function(){
+                 let name=document.querySelector("#name").value;
+                let branch=document.querySelector("#branch").value;
+                let perc=Number(document.querySelector("#prec").value);
+                console.log(eindex);
+                if(name.trim()!="" && (branch=="CSE"|| branch=="EEE"|| branch=="CSM"|| branch=="ECE"|| branch=="CSD") &&(perc<=100 && perc>=0) ){
+                     if(eindex==-1){
+                    
+                arr.push(
+                    {
+                        "name":name,
+                        "branch":branch,
+                        "perc":perc,
+                        id:Date.now()
+
+                    }
+                )
+
+                
+
+                }
+               
+                else{
+                    arr[eindex].name=name;
+                    arr[eindex].branch=branch;
+                    arr[eindex].perc=perc;
+                    eindex=-1;
+                }
+                localStorage.setItem("records",JSON.stringify(arr));
+                document.querySelector("#name").value="";
+                document.querySelector("#branch").value="";
+                document.querySelector("#prec").value=""
+                display();
+
+                }
+                else{
+                    alert("ENTER VALID INFORMATION (ALLOWED BRANCHES CSE,EEE,CSM,CSD) (ALLOWED PERCENTAGE 0 to 100) , VALID NAME");
+
+                }
+               
+                
+
+
+               
+            }
+
+        )
+        function display( p){
+            if(p!=null){
+                filter=[...p];
+                
+
+            }
+            else{
+                filter=[...arr];
+
+            }
+           
+            let container=document.querySelector("#container");
+            container.innerHTML="";
+            for(let i=0;i<filter.length;i++){
+                 let box=document.createElement("div");
+                let p1=document.createElement("p");
+                let p2=document.createElement("p");
+                let p3=document.createElement("p");
+                let delte=document.createElement("button");
+                let edit=document.createElement("button");
+                edit.textContent="EDIT";
+                edit.dataset.index=i;
+
+                delte.textContent="DELETE";
+                delte.dataset.index=i;
+                p1.textContent="NAME:    "+filter[i].name;
+                p2.textContent="BRANCH:  "+filter[i].branch;
+                p3.textContent="PERCENTAILE: "+filter[i].perc;
+                box.appendChild(p1);
+                box.appendChild(p2);
+                box.appendChild(p3);
+                box.appendChild(delte);
+              
+                box.appendChild(edit);
+
+                box.classList.add("card");
+                let main=document.querySelector("#container");
+                main.appendChild(box);
+
+                delte.addEventListener("click",
+                    function(event){
+                        let index=event.target.dataset.index;
+                        let id=filter[index].id;
+                        let newindex=arr.findIndex((x)=>x.id==id);
+                        arr.splice(newindex,1);
+                        localStorage.setItem("records",JSON.stringify(arr));
+                        display();
+
+                    }
+                )
+                edit.addEventListener("click",
+                    function(event){
+                         eindex=event.target.dataset.index;
+                         let id=filter[eindex].id;
+                         let newindex=arr.findIndex((x)=>x.id==id);
+                         eindex=newindex;
+                    
+                        let  student =arr[newindex];
+                        document.querySelector("#name").value=student.name;
+                        document.querySelector("#branch").value=student.branch;
+                        document.querySelector("#prec").value=student.perc;
+
+                       
+                        
+
+                    }
+                )
+            }
+        }
+
+        
+     </script>
+    </body>
+</html>
